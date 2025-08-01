@@ -1,8 +1,8 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion COMPILE_VERSION as int
-
+    compileSdk COMPILE_VERSION as int
+    namespace 'com.openhippy.serialization'
     defaultConfig {
         minSdkVersion MIN_VERSION as int
         targetSdkVersion TARGET_VERSION as int
@@ -21,8 +21,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     buildFeatures {

@@ -23,7 +23,6 @@
 import java.nio.file.Paths
 
 apply plugin: 'com.android.library'
-apply plugin: 'com.kezong.fat-aar'
 apply from: './publish.gradle'
 
 def mergeCppDefinitions() {
@@ -54,8 +53,11 @@ def mergeCppDefinitions() {
 }
 
 android {
-    archivesBaseName = ARCHIVES_BASE_NAME
-    compileSdkVersion COMPILE_VERSION as int
+    buildFeatures {
+      buildConfig true
+    }
+    namespace 'com.openhippy.framework'
+    compileSdk COMPILE_VERSION as int
     ndkVersion = NDK_VERSION
     defaultConfig {
         minSdkVersion MIN_VERSION as int
@@ -161,11 +163,11 @@ android {
 
 dependencies {
     api fileTree(dir: 'libs', include: ['*.jar'])
-    embed project(path: ':serialization', configuration: 'default')
-    embed project(path: ':hippy-support', configuration: 'default')
-    embed project(path: ':vfs', configuration: 'default')
-    embed project(path: ':pool', configuration: 'default')
-    embed project(path: ':devtools-integration', configuration: 'default')
+    implementation project(path: ':serialization')
+    implementation project(path: ':hippy-support')
+    implementation project(path: ':vfs')
+    implementation project(path: ':pool')
+    implementation project(path: ':devtools-integration')
     getAllModules().each {
         def module = Paths.get(it)
         def path = ['connector']
@@ -178,9 +180,9 @@ dependencies {
         }
 
 
-        embed project(path: ":${path.reverse().join('-')}", configuration: 'default')
+        implementation project(path: ":${path.reverse().join('-')}")
         if (it == 'renderer/native') {
-            embed project(path: ':renderer-native', configuration: 'default')
+          implementation project(path: ':renderer-native')
         }
     }
     compileOnly project(path: ':renderer-native')
@@ -315,16 +317,6 @@ task dealAfterAssembleRelease() {
         copy {
             from fileName
             into "$projectDir.absolutePath/../examples/android-demo/libs"
-        }
-    }
-}
-
-project.afterEvaluate {
-    project.android.libraryVariants.all { variant ->
-        def variantName = variant.name.capitalize()
-        def taskMergeClasses = project.tasks.named("mergeClasses${variantName}")
-        project.tasks.named("bundleLibCompileToJar${variantName}").configure {
-            dependsOn(taskMergeClasses)
         }
     }
 }
