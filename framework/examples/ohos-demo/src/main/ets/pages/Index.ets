@@ -1,154 +1,209 @@
-/*
- * Tencent is pleased to support the open source community by making
- * Hippy available.
- *
- * Copyright (C) 2022 THL A29 Limited, a Tencent company.
- * All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-import { router } from '@kit.ArkUI'
+import {
+  HippyEngine,
+  HippyException,
+  HippyRoot,
+  HippyRootViewWrapper,
+  HippyLibrary,
+  EngineInitParams,
+  createHippyEngine,
+  ModuleListener,
+  EngineListener,
+  EngineInitStatus,
+  ModuleLoadParams,
+  ModuleLoadStatus,
+  HippyJsException,
+  HippyValue,
+} from 'hippy'
+import HippyRenderBaseView
+  from 'hippy/src/main/ets/renderer_native/components/base/HippyRenderBaseView'
+import { LogUtils } from 'hippy/src/main/ets/support/utils/LogUtils'
+import { BackPressHandler } from 'hippy/src/main/ets/hippy_framework/HippyEngine'
+import { TestAPIProvider } from '../TestAPIProvider'
+
+const TAG: string = 'IndexPage'
 
 @Entry
 @Component
 struct Index {
-  @State page_management_icon: Resource = $r('app.media.page_management_2x')
-  @State page_setting_icon: Resource = $r('app.media.setting_2x')
+  //TODO 调试地址
+  private readonly DEBUG_SERVER_HOST = "192.168.40.77:38989"
+  @StorageLink('libHippy') private libHippy: HippyLibrary | null = null
+  @StorageLink('abilityContext') private abilityContext: Context | null = null
+  //
+  @State exception: string = ""
+  private hippyEngine: HippyEngine | null = null
+  private rootViewWrapper: HippyRootViewWrapper = new HippyRootViewWrapper()
+  @State isEngineInitialized: boolean = false
+
+  async aboutToAppear() {
+    LogUtils.e(TAG, 'Lifecycle: aboutToAppear');
+  }
+
+  onPageShow(): void {
+    LogUtils.e(TAG, 'Lifecycle: onPageShow');
+    this.hippyEngine?.onEngineResume()
+  }
+
+  onPageHide(): void {
+    LogUtils.e(TAG, 'Lifecycle: onPageHide');
+    this.hippyEngine?.onEnginePause()
+  }
+
+  aboutToDisappear(): void {
+    LogUtils.e(TAG, 'Lifecycle: aboutToDisappear');
+  }
 
   onBackPress(): boolean | void {
-    router.clear() //avoid back to PageManagement
+    LogUtils.e(TAG, 'Lifecycle: onBackPress');
+    this.hippyEngine?.onBackPressed(new RuntimeDefaultBackHandler())
+    return false
+  }
+
+  initEngine() {
+    LogUtils.e(TAG, 'initEngine start');
+    //
+    this.destroyEngine()
+    //
+    let params = new EngineInitParams(this.libHippy!, this.abilityContext!, this.getUIContext())
+    params.enableArkCApi = true
+    //TODO
+    params.debugMode = true
+    params.debugServerHost = this.DEBUG_SERVER_HOST
+
+    params.enableLog = true
+    //TODO 自定义 module 和 component 入口
+    params.providers = [new TestAPIProvider()]
+    //
+    this.hippyEngine = createHippyEngine(params)
+    let engineListener = new DefaultEngineListener(this.hippyEngine, this.rootViewWrapper)
+    this.hippyEngine.initEngine(engineListener)
+    this.isEngineInitialized = true
+    LogUtils.e(TAG, 'initEngine end');
+  }
+
+  destroyEngine() {
+    LogUtils.e(TAG, 'destroyEngine start');
+    let rootView = this.rootViewWrapper?.getRootView()
+    if (rootView) {
+      this.rootViewWrapper?.resetRootView()
+      this.hippyEngine?.destroyModule(rootView.getRootId(), () => {
+        this.hippyEngine?.destroyEngine()
+      });
+    }
+    this.isEngineInitialized = false
+    LogUtils.e(TAG, 'destroyEngine end');
   }
 
   build() {
-    Column() {
-      Text("DEMO")
-        .height(54)
-        .fontColor(Color.Black)
-        .margin({ top: 20 })
-        .fontWeight(500)
-        .fontSize(17)
-
-      Row() {
-        Image($r('app.media.logo_1x'))
-          .width(50)
-          .height('100%')
-        Image($r('app.media.hippy_2x'))
-          .width(135)
-          .height(29)
-          .margin({ left: 12 })
-      }
-      .height(50)
-      .margin({ top: 164 })
-
-      Text("This is Hippy DEMO")
-        .margin({ top: 10 })
-        .fontColor('#1E304A')
-        .fontWeight(500)
-        .fontSize(17)
-
-      Text("Ver：3.0.0")
-        .margin({ top: 10 })
-        .fontColor('#A1ACBD')
-        .fontWeight(400)
-        .fontSize(14)
-
-      Text($r('app.string.hippy_desc'))
-        .width(262)//.margin({left:72, top:74})
-        .margin({ top: 74 })
-        .fontColor('#A1ACBD')
-        .fontWeight(400)
-        .fontSize(14)
-        .lineHeight(35)
-
-      Blank()
-      Row() {
-        Column() {
-          Image($r('app.media.start_prompt_2x'))
-            .width(136)
-            .height(36)
-        }
-        .width('50%')
-      }
-      .width('100%')
-
-      Row() {
-        Column() {
-          Image(this.page_management_icon)
-            .width(19)
-            .height(21)
-            .margin({ top: 8 })
-
-          Text('Page Manage')
-            .fontColor('#4A5970')
-            .fontWeight(400)
-            .fontSize(11)
-            .margin({ top: 2 })
-        }
-        .height(52)
-        .width('50%')
-        .onTouch((event?: TouchEvent) => {
-          if (event) {
-            if (event.type === TouchType.Down) {
-              this.page_management_icon = $r('app.media.page_management_pressed_2x')
-            } else if (event.type === TouchType.Up || event.type === TouchType.Cancel) {
-              this.page_management_icon = $r('app.media.page_management_2x')
-            }
-          }
-        })
-        .onClick(() => {
-          router.pushUrl({
-            url: 'pages/PageManagement',
-            params: {}
-          }, router.RouterMode.Single)
-        })
-
-        Column() {
-          Image(this.page_setting_icon)
-            .width(19)
-            .height(21)
-            .margin({ top: 8 })
-
-          Text('Setting')
-            .margin({ top: 2 })
-            .fontColor('#4A5970')
-            .fontWeight(400)
-            .fontSize(11)
-        }
-        .height(52)
-        .width('50%')
-        .onTouch((event?: TouchEvent) => {
-          if (event) {
-            if (event.type === TouchType.Down) {
-              this.page_setting_icon = $r('app.media.setting_pressed_2x')
-            } else if (event.type === TouchType.Up || event.type === TouchType.Cancel) {
-              this.page_setting_icon = $r('app.media.setting_2x')
-            }
-          }
-        })
-        .onClick(() => {
-          router.pushUrl({
-            url: 'pages/PageSetting',
-            params: {}
+    Stack() {
+      Column() {
+        Button("调试: " + this.DEBUG_SERVER_HOST)
+          .fontColor(Color.White)
+          .fontSize(35)
+          .fontWeight(FontWeight.Bold)
+          .backgroundColor('#40b883')
+          .type(ButtonType.Capsule)
+          .width(800)
+          .height(100)
+          .onClick(() => {
+            this.initEngine()
           })
-        })
       }
+      .alignItems(HorizontalAlign.Center)
+      .justifyContent(FlexAlign.Center)
       .width('100%')
-      .backgroundColor(Color.White)
+      .height('100%')
+      .expandSafeArea()
+
+      if (this.isEngineInitialized) {
+        HippyRoot({
+          hippyEngine: this.hippyEngine,
+          rootViewWrapper: this.rootViewWrapper,
+          onRenderException: (exception: HippyException) => {
+            this.exception = `${exception.message}\n${exception.stack}`
+            LogUtils.e(TAG, 'onRenderException: ' + this.exception);
+          },
+        }).layoutWeight(1)
+      }
+      if (this.exception) {
+        Text(this.exception)
+      }
     }
+    .alignContent(Alignment.TopStart)
     .width('100%')
     .height('100%')
-    .backgroundColor($r('app.color.home_background'))
-    .align(Alignment.Center)
+    .backgroundColor('#3394D0')
     .expandSafeArea()
   }
 }
+
+
+class DefaultEngineListener implements EngineListener {
+  private hippyEngine: HippyEngine
+  private rootViewWrapper: HippyRootViewWrapper
+
+  constructor(hippyEngine: HippyEngine, rootViewWrapper: HippyRootViewWrapper) {
+    this.hippyEngine = hippyEngine
+    this.rootViewWrapper = rootViewWrapper
+  }
+
+  onInitialized(statusCode: EngineInitStatus, msg: string): void {
+    LogUtils.e(TAG, 'initEngine status: ' + statusCode + ' msg:' + msg);
+    if (statusCode == EngineInitStatus.STATUS_OK) {
+      let loadParams = new ModuleLoadParams(
+        'vue2/index.ohos.js',
+        '',
+        '',
+        '',
+        null,
+        null,
+        null,
+      )
+      //TODO
+      loadParams.componentName = "Demo"
+      loadParams.codeCacheTag = "Demo"
+      loadParams.jsParams = new Map<string, HippyValue>()
+      loadParams.jsParams.set(
+        "msgFromNative",
+        "Hi js developer, I come from ohos native code!"
+      )
+      loadParams.wrappedCustomRenderViewBuilder = wrapBuilder(buildCustomRenderView)
+      let moduleListener = new DefaultModuleListener()
+      let rootView = this.hippyEngine.loadModuleWithListener(loadParams, moduleListener)
+      if (rootView) {
+        this.rootViewWrapper.setRootView(rootView)
+      }
+    }
+  }
+}
+
+class DefaultModuleListener implements ModuleListener {
+  onLoadCompleted(statusCode: ModuleLoadStatus, msg: string): void {
+    LogUtils.i(TAG, 'loadModule status: ' + statusCode + ' msg:' + msg);
+  }
+
+  onJsException(exception: HippyJsException): boolean {
+    LogUtils.e(TAG, 'loadModule onJsException: ' + exception);
+    return true;
+  }
+
+  onFirstViewAdded(): void {
+
+  }
+
+  onFirstContentfulPaint(): void {
+
+  }
+}
+
+
+class RuntimeDefaultBackHandler implements BackPressHandler {
+  handleBackPress(): void {
+    console.log('Back button pressed');
+  }
+}
+
+@Builder
+function buildCustomRenderView($$: HippyRenderBaseView) {
+}
+
