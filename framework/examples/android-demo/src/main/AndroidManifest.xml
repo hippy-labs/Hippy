@@ -50,7 +50,7 @@
           android:name=".MainActivity"
           android:configChanges="orientation|screenSize|keyboardHidden"
           android:exported="true"
-          android:screenOrientation="portrait">
+          android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
