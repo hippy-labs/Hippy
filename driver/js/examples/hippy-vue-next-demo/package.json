@@ -3,7 +3,6 @@
   "version": "2.0.0",
   "description": "A Demo Example For Hippy-Vue-Next Library To Show.",
   "private": true,
-  "webMain": "./src/main-web.ts",
   "nativeMain": "./src/main-native.ts",
   "repository": "https://github.com/Tencent/Hippy/tree/master/examples/hippy-vue-next-demo",
   "license": "Apache-2.0",
