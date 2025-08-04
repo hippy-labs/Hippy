@@ -30,15 +30,33 @@ include("${PROJECT_ROOT_DIR}/buildconfig/cmake/compiler_toolchain.cmake")
 set(CMAKE_VERBOSE_MAKEFILE on)
 set(CMAKE_CXX_STANDARD 17)
 
+#------------------------------------------------------------------------
 # Ohos系统上，配置本来应该放到生成so对应的build-profile.json5里。
 #（externalNativeOptions里arguments项）
 # 现在源码集成配置需在app的build-profile.json5里，不方便，所以先放在这里。
 # 后续hippy产物的独立后，放到hippy模块的build-profile.json5里。
 if (OHOS)
-#  set(JS_ENGINE "V8")
-  set(V8_COMPONENT "10.6.194")
-  set(JS_ENGINE "JSH")
-endif ()
+  if (NOT DEFINED JS_ENGINE)
+    if (ENABLE_INSPECTOR)
+      message(STATUS "ENABLE_INSPECTOR=ON，自动使用 V8 引擎以支持调试")
+      set(JS_ENGINE "V8")
+    else()
+      message(STATUS "ENABLE_INSPECTOR=OFF，默认使用 JSH 引擎")
+      set(JS_ENGINE "JSH")
+    endif()
+  endif()
+
+  if (${JS_ENGINE} STREQUAL "V8")
+    set(V8_COMPONENT "10.6.194")
+    add_definitions(-DUSE_V8_ENGINE)
+  elseif (${JS_ENGINE} STREQUAL "JSH")
+    # set(JSH_COMPONENT "5.2.0") # 示例
+    add_definitions(-DUSE_JSH_ENGINE)
+  else()
+    message(FATAL_ERROR "不支持的 JS_ENGINE 类型: ${JS_ENGINE}")
+  endif()
+endif()
+#------------------------------------------------------------------------
 
 # region library
 add_library(${PROJECT_NAME} STATIC)
