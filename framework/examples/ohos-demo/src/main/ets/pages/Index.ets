@@ -67,7 +67,7 @@ struct Index {
     //
     let params = new EngineInitParams(this.libHippy!, this.abilityContext!, this.getUIContext())
     //👉
-    params.enableArkCApi = false
+    params.enableArkCApi = true
     //👉
     params.debugMode = true
     params.debugServerHost = this.DEBUG_SERVER_HOST
@@ -161,7 +161,7 @@ class DefaultEngineListener implements EngineListener {
         null,
         null,
       )
-      //TODO
+      //👉
       loadParams.componentName = "Demo"
       loadParams.codeCacheTag = "Demo"
       loadParams.jsParams = new Map<string, HippyValue>()

@@ -181,6 +181,9 @@ public:
   constexpr static const char * PROP_TOP_PRIORITY = "nestedScrollTopPriority";
   constexpr static const char * PROP_RIGHT_PRIORITY = "nestedScrollRightPriority";
   constexpr static const char * PROP_BOTTOM_PRIORITY = "nestedScrollBottomPriority";
+
+  //👉
+  constexpr static const char * PROP_MESSAGE_PRIORITY = "message";
 };
 
 } // namespace native

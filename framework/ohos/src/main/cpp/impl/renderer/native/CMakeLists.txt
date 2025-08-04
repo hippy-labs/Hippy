@@ -133,6 +133,7 @@ set(SOURCE_SET
   src/components/waterfall_view.cc
   src/components/waterfall_pull_footer_view.cc
   src/components/waterfall_pull_header_view.cc
+  src/components/hippy_labs_view.cc
   src/recycle/recycle_view.cc
   src/text_measure/font_collection_manager.cc
   src/text_measure/text_measurer.cc

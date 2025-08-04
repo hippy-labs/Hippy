@@ -126,7 +126,9 @@ public:
   constexpr static const char * EVENT_SCROLLER_MOMENTUM_BEGIN = "momentumScrollBegin";
   // On scroll view momentum end.
   constexpr static const char * EVENT_SCROLLER_MOMENTUM_END = "momentumScrollEnd";
-  
+  //👉 On event component.
+  constexpr static const char * EVENT_NATIVE_EVENT = "onNativeEvent";
+    
   static bool CheckRegisteredEvent(const std::shared_ptr<NativeRenderContext> &ctx, uint32_t node_id, const std::string &event_name);
   
   inline static void SendComponentEvent(const std::shared_ptr<NativeRenderContext> &ctx, uint32_t node_id, const std::string &event_name,

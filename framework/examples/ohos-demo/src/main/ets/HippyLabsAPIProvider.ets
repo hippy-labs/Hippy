@@ -23,8 +23,8 @@ export class HippyLabsAPIProvider extends HippyAPIProvider {
   getCustomRenderViewCreatorMap(): Map<string, HRRenderViewCreator> | null {
     let registerMap: Map<string, HRRenderViewCreator> = new Map()
     //👉 注册组件
-    registerMap.set("HippyLabsNativeElement",
-      (ctx): HippyRenderBaseView => new HippyLabsNativeView(ctx))
+    // registerMap.set("HippyLabsNativeElement",
+    //   (ctx): HippyRenderBaseView => new HippyLabsNativeView(ctx))
     return registerMap
   }
 

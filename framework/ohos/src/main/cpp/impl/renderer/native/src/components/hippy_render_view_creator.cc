@@ -22,6 +22,7 @@
 
 #include "renderer/components/hippy_render_view_creator.h"
 #include "renderer/components/div_view.h"
+#include "renderer/components/hippy_labs_view.h"
 #include "renderer/components/image_view.h"
 #include "renderer/components/list_item_view.h"
 #include "renderer/components/list_view.h"
@@ -132,6 +133,10 @@ std::shared_ptr<BaseView> HippyCreateRenderView(std::string &view_name, bool is_
     } else {
       view = std::make_shared<PullFooterView>(ctx);
     }
+    view->Init();
+    return view;
+  } else if (view_name == "HippyLabsNativeElement") {//👈 
+    auto view = std::make_shared<HippyLabsView>(ctx);
     view->Init();
     return view;
   }
