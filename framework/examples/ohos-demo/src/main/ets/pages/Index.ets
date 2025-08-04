@@ -18,15 +18,16 @@ import HippyRenderBaseView
   from 'hippy/src/main/ets/renderer_native/components/base/HippyRenderBaseView'
 import { LogUtils } from 'hippy/src/main/ets/support/utils/LogUtils'
 import { BackPressHandler } from 'hippy/src/main/ets/hippy_framework/HippyEngine'
-import { TestAPIProvider } from '../TestAPIProvider'
+import { HippyLabsAPIProvider } from '../HippyLabsAPIProvider'
+import { HippyLabsNativeViewElement, HippyLabsNativeView } from '../components/HippyLabsNativeView'
 
 const TAG: string = 'IndexPage'
 
 @Entry
 @Component
 struct Index {
-  //TODO 调试地址
-  private readonly DEBUG_SERVER_HOST = "192.168.40.77:38989"
+  //👉 调试地址
+  private readonly DEBUG_SERVER_HOST = "192.168.199.101:38989"
   @StorageLink('libHippy') private libHippy: HippyLibrary | null = null
   @StorageLink('abilityContext') private abilityContext: Context | null = null
   //
@@ -65,14 +66,15 @@ struct Index {
     this.destroyEngine()
     //
     let params = new EngineInitParams(this.libHippy!, this.abilityContext!, this.getUIContext())
-    params.enableArkCApi = true
-    //TODO
+    //👉
+    params.enableArkCApi = false
+    //👉
     params.debugMode = true
     params.debugServerHost = this.DEBUG_SERVER_HOST
 
     params.enableLog = true
-    //TODO 自定义 module 和 component 入口
-    params.providers = [new TestAPIProvider()]
+    //👉 自定义 module 和 component 入口
+    params.providers = [new HippyLabsAPIProvider()]
     //
     this.hippyEngine = createHippyEngine(params)
     let engineListener = new DefaultEngineListener(this.hippyEngine, this.rootViewWrapper)
@@ -205,5 +207,12 @@ class RuntimeDefaultBackHandler implements BackPressHandler {
 
 @Builder
 function buildCustomRenderView($$: HippyRenderBaseView) {
+  //👉
+  if ($$ instanceof HippyLabsNativeView) {
+    HippyLabsNativeViewElement({
+      renderView: $$ as HippyLabsNativeView,
+      children: $$.children,
+    })
+  }
 }
 
