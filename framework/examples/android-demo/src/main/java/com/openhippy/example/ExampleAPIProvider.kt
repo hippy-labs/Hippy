@@ -14,6 +14,7 @@
  */
 package com.openhippy.example
 
+import com.openhippy.example.component.HippyLabsViewController
 import com.openhippy.example.turbo.DemoTurboModule
 import com.tencent.mtt.hippy.HippyAPIProvider
 import com.tencent.mtt.hippy.HippyEngineContext
@@ -44,6 +45,9 @@ class ExampleAPIProvider : HippyAPIProvider {
      * register View controller for JavaScript
      */
     override fun getControllers(): List<Class<out HippyViewController<*>>> {
-        return arrayListOf(ExampleCustomPropsController::class.java)
+        return arrayListOf(
+          ExampleCustomPropsController::class.java,
+          HippyLabsViewController::class.java,
+        )
     }
 }

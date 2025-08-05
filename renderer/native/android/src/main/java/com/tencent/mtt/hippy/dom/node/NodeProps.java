@@ -172,4 +172,7 @@ public class NodeProps {
     public static final String ITEM_SPACING = "interItemSpacing";
     public static final String FULL_SPAN = "fullSpan";
     public static final String CARET_COLOR = "caret-color";
+
+    //👉
+    public static final String MESSAGE = "message";
 }

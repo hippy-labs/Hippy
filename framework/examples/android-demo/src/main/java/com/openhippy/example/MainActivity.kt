@@ -41,7 +41,8 @@ class MainActivity : AppCompatActivity() {
 
   companion object {
     private const val TAG = "MainActivity"
-    private const val DEBUG_SERVER_HOST = "192.168.40.77:38989"
+    //👉
+    private const val DEBUG_SERVER_HOST = "192.168.40.41:38989"
   }
 
   private lateinit var activityMainRoot: ViewGroup
@@ -96,6 +97,7 @@ class MainActivity : AppCompatActivity() {
     val initParams = EngineInitParams()
     initParams.context = this@MainActivity
     initParams.debugServerHost = DEBUG_SERVER_HOST
+    //👉
     initParams.debugMode = true
     initParams.enableLog = true
     initParams.logAdapter = DefaultLogAdapter()
@@ -131,7 +133,9 @@ class MainActivity : AppCompatActivity() {
         Log.e(TAG, "handleBackgroundTracing :$details")
       }
     }
+    //👉
     val providers: MutableList<HippyAPIProvider> = ArrayList()
+    //👉
     providers.add(ExampleAPIProvider())
 
     initParams.providers = providers

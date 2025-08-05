@@ -122,6 +122,9 @@ public class EventUtils {
     // On scroll view momentum end.
     public static final String EVENT_SCROLLER_MOMENTUM_END = "momentumScrollEnd";
 
+    //👉
+    public static final String EVENT_NATIVE_EVENT = "onNativeEvent";
+
     public enum EventType {
         EVENT_TYPE_COMPONENT,
         EVENT_TYPE_GESTURE,
