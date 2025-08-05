@@ -15,6 +15,7 @@
 package com.openhippy.example
 
 import com.openhippy.example.component.HippyLabsViewController
+import com.openhippy.example.modules.HippyLabsModule
 import com.openhippy.example.turbo.DemoTurboModule
 import com.tencent.mtt.hippy.HippyAPIProvider
 import com.tencent.mtt.hippy.HippyEngineContext
@@ -30,7 +31,8 @@ class ExampleAPIProvider : HippyAPIProvider {
      */
     override fun getNativeModules(context: HippyEngineContext): Map<Class<out HippyNativeModuleBase>, Provider<out HippyNativeModuleBase>> {
         return mapOf(
-            DemoTurboModule::class.java to Provider { DemoTurboModule(context) }
+            DemoTurboModule::class.java to Provider { DemoTurboModule(context) },
+            HippyLabsModule::class.java to Provider { HippyLabsModule(context) }
         )
     }
 
