@@ -62,6 +62,8 @@ export * from "./src/main/ets/hippy_framework/modules/native/network/NetworkModu
 export * from "./src/main/ets/hippy_framework/modules/native/network/WebSocketModule"
 export * from "./src/main/ets/hippy_framework/modules/native/utils/UtilsModule"
 export * from "./src/main/ets/hippy_framework/modules/HippyModuleManagerImpl"
+export * from "./src/main/ets/hippy_framework/modules/HippyModulePromise"
+export * from "./src/main/ets/hippy_framework/modules/javascript/EventDispatcher"
 
 export * from "./src/main/ets/hippy_framework/worker_modules/HippyWModuleManagerImpl"
 export * from "./src/main/ets/hippy_framework/worker_modules/native/HippyWModuleBase"
@@ -87,3 +89,4 @@ export * from "./src/main/ets/support/annotation/HippyNativeModule"
 export * from "./src/main/ets/support/common/HippyException"
 export * from "./src/main/ets/support/common/HippyException"
 export * from "./src/main/ets/support/common/HippyTypes"
+export * from "./src/main/ets/support/utils/LogUtils"

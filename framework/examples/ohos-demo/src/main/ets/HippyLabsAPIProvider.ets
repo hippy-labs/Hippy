@@ -1,11 +1,15 @@
 import { HippyAPIProvider } from 'hippy';
 
 import {
-  HippyJSModuleCreator, HippyNativeModuleCreator, HRRenderViewCreator
+  HippyJSModuleCreator,
+  HippyNativeModuleCreator,
+  HRRenderViewCreator,
+  HippyNativeModuleBase
 } from 'hippy';
 import HippyRenderBaseView
   from 'hippy/src/main/ets/renderer_native/components/base/HippyRenderBaseView'
 import { HippyLabsNativeView } from './components/HippyLabsNativeView';
+import { HippyLabsModule } from './module/HippyLabsModule';
 
 /**
  *  自定义组件和模块入口
@@ -13,6 +17,8 @@ import { HippyLabsNativeView } from './components/HippyLabsNativeView';
 export class HippyLabsAPIProvider extends HippyAPIProvider {
   getCustomNativeModuleCreatorMap(): Map<string, HippyNativeModuleCreator> | null {
     let registerMap: Map<string, HippyNativeModuleCreator> = new Map()
+    //👉 注册模块
+    registerMap.set(HippyLabsModule.NAME, (ctx): HippyNativeModuleBase => new HippyLabsModule(ctx))
     return registerMap;
   }
 
